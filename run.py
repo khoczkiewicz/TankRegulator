@@ -1,7 +1,7 @@
 from simple_pid import PID
 import time
 
-from flask import Flask, Markup, render_template
+from flask import Flask, Markup, render_template, request
 
 app = Flask(__name__)
 
@@ -19,14 +19,14 @@ class Tank:
         self.h += self.Qd * (x / 100) - self.Qo
 
 
-def RegulateTank():
+def RegulateTank(P = 5, I = 3, D = 0.01):
     hList = []
     tList = []
     setPointList = []  # SP
     sample_time = 0.01
 
     tank = Tank()
-    pid = PID(5, 3, 0.01, setpoint=20, sample_time=sample_time)
+    pid = PID(P, I, D, setpoint=20, sample_time=sample_time)
 
     N = 100  # okres próbkowania
     currentH = tank.h
@@ -56,17 +56,18 @@ def RenderTemplate(line_labels, line_values):
         labels=line_labels,
         values=line_values,
     )
-
-
-@app.route('/resource', methods = ['POST'])
-def update_text():
-    # TODO
-    return RenderTemplate()
     
 
-@app.route("/line")
+@app.route("/line", methods=['GET', 'POST'])
 def line():
-    tList, hList, setPointList = RegulateTank()
+    if request.method == 'POST':
+
+        P = float(request.form['parg'])
+        I = float(request.form['iarg'])
+        D = float(request.form['darg'])
+        tList, hList, setPointList = RegulateTank(P, I, D)
+    else:
+        tList, hList, setPointList = RegulateTank()
     return RenderTemplate(tList, hList)
 
 
