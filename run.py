@@ -23,7 +23,7 @@ class Tank:
         self.h += self.Qd * (x / 100) - self.Qo
 
 
-def RegulateTank(P = 5, I = 3, D = 0.01):
+def RegulateTank(P = 1, I = 10, D = 0.01):
     hList = []
     tList = []
     setPointList = []  # SP
@@ -99,9 +99,10 @@ def line():
         I = float(request.form['iarg'])
         D = float(request.form['darg'])
         tList, hList, setPointList = RegulateTank(P, I, D)
+        return RenderTemplate(tList, hList, P, I D)
     else:
         tList, hList, setPointList = RegulateTank()
-    return RenderTemplate(tList, hList, P, I, D)
+        return RenderTemplate(tList, hList, 1, 10, 0.01)
 
 
 if __name__ == "__main__":
