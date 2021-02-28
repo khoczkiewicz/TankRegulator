@@ -1,5 +1,9 @@
 from simple_pid import PID
+from skfuzzy import control as ctrl
 import time
+import skfuzzy as fuzz
+import numpy as np
+import matplotlib.pyplot as plt
 
 from flask import Flask, Markup, render_template, request
 
@@ -46,6 +50,32 @@ def RegulateTank(P = 5, I = 3, D = 0.01):
         setPointList.append(pid.setpoint)
         tList.append(n)
     return tList, hList, setPointList
+
+def RegulateTankFuzzy():
+    x_waterLevel = ctrl.Antecedent(np.arange(0.00, 1.04, 0.08), 'level')
+    x_waterInput = ctrl.Consequent(np.arange(0.00, 1.10, 0.16), 'flow')
+
+    x_waterLevel.automf(3)
+
+    x_waterInput['slow'] = fuzz.trimf(x_waterInput.universe, [0.00, 0.00, 0.48])
+    x_waterInput['medium'] = fuzz.trimf(x_waterInput.universe, [0.00, 0.48, 0.96])
+    x_waterInput['fast'] = fuzz.trimf(x_waterInput.universe, [0.48, 0.96, 0.96])
+
+    rule1 = ctrl.Rule(x_waterLevel['good'], x_waterInput['slow'])
+    rule2 = ctrl.Rule(x_waterLevel['average'], x_waterInput['medium'])
+    rule3 = ctrl.Rule(x_waterLevel['poor'], x_waterInput['fast'])
+
+    water_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])
+    water = ctrl.ControlSystemSimulation(water_ctrl)
+
+    water.input['level'] = 0.9
+
+    water.compute()
+    print(water.output['flow'])
+    x_waterInput.view(sim=water)
+    plt.show();
+
+
 
 
 def RenderTemplate(line_labels, line_values, p, i, d):
