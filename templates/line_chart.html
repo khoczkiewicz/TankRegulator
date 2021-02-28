@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <title>{{ title }}</title>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
   <center>
     <h1>{{ title }}</h1>
 
-    <canvas id="chart" width="600" height="400"></canvas>
+    <canvas id="chart" width="1200" height="800"></canvas>
     <script>
 
       // bar chart data
@@ -46,40 +47,54 @@
       Chart.defaults.global.responsive = false;
       Chart.defaults.global.scaleLineColor = "black";
       Chart.defaults.global.scaleFontSize = 16;
+      Chart.defaults.global.tooltips.mode = "single";
+      Chart.defaults.global.legend.display = false;
 
       // get bar chart canvas
-      var mychart = document.getElementById("chart").getContext("2d");
-
+      var myChart = document.getElementById("chart").getContext("2d");
+      
       steps = 10
       max = {{ max }}
       // draw bar chart
-      var LineChartDemo = new Chart(mychart).Line(barData, {
+      var LineChartDemo = new Chart(myChart, {
+        type: "line",
+        data: barData,
         scaleOverride: true,
         scaleSteps: steps,
         scaleStepWidth: Math.ceil(max / steps),
-        scaleStartValue: 12,
         scaleShowVerticalLines: true,
         scaleShowGridLines : true,
         barShowStroke : true,
         scaleShowLabels: true,
-        bezierCurve: false,
+        bezierCurve: false
       });
+
+      $(document).on('submit','#paramForm',function(e) {
+        e.preventDefault(); 
+      });
+
+
 
     </script>
 
-	<form action="\line" method="POST">
-	  <div>
-		<label for="parg">P</label>
-		<input name="parg" id="parg" value="5">
-	  </div>
-	  <div>
-		<label for="iarg">I</label>
-		<input name="iarg" id="iarg" value="3">
-	  </div>
-	  <div>
-		<label for="darg">D</label>
-		<input name="darg" id="darg" value="0.01">
-	  </div>
+	<form action="\line" name="paramForm" method="POST">
+    <br>
+		<div style="display: inline-block; margin: auto;">
+      <label for="parg">P</label>
+      <input id="parg" name="parg" value={{P}} type="range" min="0" max="10" step="0.1" oninput="pamount.value=parg.value" />
+      <input id="pamount" type="text" size="1" value={{P}} disabled/>
+    </div>
+		<div style="display: inline-block; margin: auto;">
+      <label for="iarg">I</label>
+      <input id="iarg" name="iarg" value={{I}} type="range" min="0" max="10" step="0.1" oninput="iamount.value=iarg.value" />
+      <input id="iamount" type="text" size="1" value={{I}} disabled/>
+    </div>
+		<div style="display: inline-block; margin: auto;">
+      <label for="darg">D</label>
+      <input id="darg" name="darg" value={{D}} type="range" min="0" max="1" step="0.01" oninput="damount.value=darg.value" />
+      <input id="damount" type="text" size="1" value={{D}} disabled/>
+    </div>
+    <br><br>
 	  <div>
 		<button>Confirm</button>
 	  </div>

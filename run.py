@@ -48,10 +48,13 @@ def RegulateTank(P = 5, I = 3, D = 0.01):
     return tList, hList, setPointList
 
 
-def RenderTemplate(line_labels, line_values):
+def RenderTemplate(line_labels, line_values, p, i, d):
     return render_template(
         "line_chart.html",
         title="PID",
+		P=p,
+		I=i,
+		D=d,
         max=max(line_values),
         labels=line_labels,
         values=line_values,
@@ -68,7 +71,7 @@ def line():
         tList, hList, setPointList = RegulateTank(P, I, D)
     else:
         tList, hList, setPointList = RegulateTank()
-    return RenderTemplate(tList, hList)
+    return RenderTemplate(tList, hList, P, I, D)
 
 
 if __name__ == "__main__":
