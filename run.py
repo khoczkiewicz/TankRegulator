@@ -99,7 +99,7 @@ def line():
         I = float(request.form['iarg'])
         D = float(request.form['darg'])
         tList, hList, setPointList = RegulateTank(P, I, D)
-        return RenderTemplate(tList, hList, P, I D)
+        return RenderTemplate(tList, hList, P, I, D)
     else:
         tList, hList, setPointList = RegulateTank()
         return RenderTemplate(tList, hList, 1, 10, 0.01)
