@@ -51,6 +51,7 @@ def RegulateTank(P = 1, I = 10, D = 0.01):
         tList.append(n)
     return tList, hList, setPointList
 
+
 def RegulateTankFuzzy():
     x_waterLevel = ctrl.Antecedent(np.arange(0.00, 1.04, 0.08), 'level')
     x_waterInput = ctrl.Consequent(np.arange(0.00, 1.10, 0.16), 'flow')
@@ -68,14 +69,12 @@ def RegulateTankFuzzy():
     water_ctrl = ctrl.ControlSystem([rule1, rule2, rule3])
     water = ctrl.ControlSystemSimulation(water_ctrl)
 
-    water.input['level'] = 0.9
+    water.input['level'] = 0.7
 
     water.compute()
     print(water.output['flow'])
     x_waterInput.view(sim=water)
     plt.show();
-
-
 
 
 def RenderTemplate(line_labels, line_values, p, i, d):
@@ -104,6 +103,9 @@ def line():
         tList, hList, setPointList = RegulateTank()
         return RenderTemplate(tList, hList, 1, 10, 0.01)
 
-
+import webbrowser
+    
 if __name__ == "__main__":
+
+    webbrowser.open('http://localhost:8080/line', new=2)
     app.run(host="0.0.0.0", port=8080, debug=True)
