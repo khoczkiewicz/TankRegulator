@@ -84,40 +84,43 @@ var config = {
 window.onload = function() {
     var ctx = document.getElementById('myChart').getContext('2d');
     window.myChart = new Chart(ctx, config);
+
+    var form = document.getElementById("paramForm");
+    function handleForm(event) { event.preventDefault(); } 
+    form.addEventListener('submit', handleForm);
+
+    document.getElementById('update').addEventListener('click', function() {
+        window.myChart.config.data.datasets.forEach(function(dataset) {
+            dataset.data = [];
+        });
+        Qd = document.getElementById('qdarg').value // Inflow
+        Qo = document.getElementById('qoarg').value // Outflow
+        output = 0 // Output to compute
+        pid = new PID(document.getElementById('parg').value, document.getElementById('iarg').value, document.getElementById('darg').value)
+        pid.setSampleTime(document.getElementById('starg').value)
+        pid.setOutputLimits(0, 60)
+        pid.setTarget(document.getElementById('harg').value)
+        window.myChart.update();
+    });
 };
 
-document.getElementById('randomizeData').addEventListener('click', function() {
+/*document.getElementById('randomizeData').addEventListener('click', function() {
     config.data.datasets.forEach(function(dataset) {
         dataset.data.forEach(function(dataObj) {
             dataObj.y = scalingFactor();
         });
     });
     window.myChart.update();
-});
+});*/
 
-var colorNames = Object.keys(chartColors);
-document.getElementById('addDataset').addEventListener('click', function() {
-    var colorName = colorNames[config.data.datasets.length % colorNames.length];
-    var newColor = chartColors[colorName];
-    var newDataset = {
-        label: 'Dataset ' + (config.data.datasets.length + 1),
-        backgroundColor: color(newColor).alpha(0.5).rgbString(),
-        borderColor: newColor,
-        fill: false,
-        lineTension: 0,
-        data: []
-    };
+//var colorNames = Object.keys(chartColors);
 
-    config.data.datasets.push(newDataset);
-    window.myChart.update();
-});
-
-document.getElementById('removeDataset').addEventListener('click', function() {
+/*document.getElementById('removeDataset').addEventListener('click', function() {
     config.data.datasets.pop();
     window.myChart.update();
-});
+});*/
 
-document.getElementById('addData').addEventListener('click', function() {
+/*document.getElementById('addData').addEventListener('click', function() {
     onRefresh(window.myChart);
     window.myChart.update();
-});
+});*/
