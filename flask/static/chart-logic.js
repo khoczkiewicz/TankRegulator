@@ -7,7 +7,7 @@ output = 0 // Output to compute
 
 var pid = new PID(2, 10, 0.01)
 pid.setSampleTime(100)
-pid.setOutputLimits(0, 60)
+pid.setOutputLimits(0, 100)
 pid.setTarget(20)
 
 var chartColors = {
@@ -81,6 +81,18 @@ var config = {
     }
 };
 
+const getFuzzyImage = (target_level) => {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById('fuzzy').src = 'http://localhost:8080/fuzzy.png?' + new Date().getTime();
+        }
+    };
+    xhttp.open('POST', 'http://localhost:8080/fuzzy.png', true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send(`water_level=${target_level}`);
+}
+
 window.onload = function() {
     var ctx = document.getElementById('myChart').getContext('2d');
     window.myChart = new Chart(ctx, config);
@@ -89,17 +101,19 @@ window.onload = function() {
     function handleForm(event) { event.preventDefault(); } 
     form.addEventListener('submit', handleForm);
 
+    getFuzzyImage(document.getElementById('harg').value / 100.0);
+
     document.getElementById('update').addEventListener('click', function() {
-        window.myChart.config.data.datasets.forEach(function(dataset) {
-            dataset.data = [];
-        });
-        Qd = document.getElementById('qdarg').value // Inflow
-        Qo = document.getElementById('qoarg').value // Outflow
+        window.myChart.config.data.datasets[0].data = [];
+        Qd = parseInt(document.getElementById('qdarg').value) // Inflow
+        Qo = parseInt(document.getElementById('qoarg').value) // Outflow
+        h = parseInt(document.getElementById('starg').value) //level
         output = 0 // Output to compute
-        pid = new PID(document.getElementById('parg').value, document.getElementById('iarg').value, document.getElementById('darg').value)
-        pid.setSampleTime(document.getElementById('starg').value)
-        pid.setOutputLimits(0, 60)
-        pid.setTarget(document.getElementById('harg').value)
+        pid = new PID(parseFloat(document.getElementById('parg').value), parseFloat(document.getElementById('iarg').value), parseFloat(document.getElementById('darg').value))
+        pid.setSampleTime(parseInt(document.getElementById('sptarg').value))
+        pid.setOutputLimits(0, 100)
+        pid.setTarget(parseInt(document.getElementById('harg').value))
+        getFuzzyImage(document.getElementById('harg').value / 100.0);
         window.myChart.update();
     });
 };
