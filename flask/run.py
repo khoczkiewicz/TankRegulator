@@ -8,7 +8,7 @@ import io
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 
-from flask import Flask, Markup, render_template, request, Response
+from flask import Flask, Markup, render_template, request, Response, jsonify, make_response
 
 app = Flask(__name__)
 
@@ -45,7 +45,9 @@ def fuzz_png():
     if request.method == 'POST':
         water_level = float(request.form['water_level'])
         RegulateTankFuzzy(water_level)
-        fig = plt.figure(1)
+        return Response()
+    if request.method == 'GET':
+        fig = plt.gcf()
         output = io.BytesIO()
         FigureCanvas(fig).print_png(output)
         return Response(output.getvalue(), mimetype='image/png')
