@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Water Tank Regulator</title>
+		<script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/min/moment.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.8.0"></script>
+		<script type=text/javascript src="{{
+  			url_for('static', filename='pid-controller.js') }}"></script>
+		<script type=text/javascript src="{{
+  			url_for('static', filename='chart-logic.js') }}"></script> 
+		<style>
+			canvas {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			}
+			.paramForm {
+			display: inline-block;
+			margin: auto;
+			}
+			.chart {
+			margin: auto;
+			width: 75%;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+			<div class="chart">
+				<canvas id="myChart"></canvas>
+			</div>
+			<form id="paramForm" class="paramForm">
+				<br>
+				<!--Inflow-->
+				<label for="qdarg">Inflow</label>
+				<input id="qdarg" name="qdarg" value=30 type="range" min="0" max="100" step="1" oninput="qdamount.value=qdarg.value" />
+				<input id="qdamount" type="text" size="1" value=30 disabled/>
+				<!--Outflow-->
+				<label for="qoarg">Outflow</label>
+				<input id="qoarg" name="qoarg" value=7 type="range" min="0" max="100" step="1" oninput="qoamount.value=qoarg.value" />
+				<input id="qoamount" type="text" size="1" value=7 disabled/>
+				<!--Taget level-->
+				<label for="harg">Target level</label>
+				<input id="harg" name="harg" value=20 type="range" min="0" max="100" step="1" oninput="hamount.value=harg.value" />
+				<input id="hamount" type="text" size="1" value=20 disabled/>
+				<br>
+				<br>
+				<!--P-->
+				<label for="parg">P</label>
+				<input id="parg" name="parg" value=2 type="range" min="0" max="10" step="0.1" oninput="pamount.value=parg.value" />
+				<input id="pamount" type="text" size="1" value=2 disabled/>
+				<!--I-->
+				<label for="iarg">I</label>
+				<input id="iarg" name="iarg" value=10 type="range" min="0" max="10" step="0.1" oninput="iamount.value=iarg.value" />
+				<input id="iamount" type="text" size="1" value=10 disabled/>
+				<!--D-->
+				<label for="darg">D</label>
+				<input id="darg" name="darg" value=0.1 type="range" min="0" max="1" step="0.01" oninput="damount.value=darg.value" />
+				<input id="damount" type="text" size="1" value=0.1 disabled/>
+				<!--Sample time-->
+				<label for="starg">Sample time</label>
+				<input id="starg" name="starg" value=100 type="range" min="0" max="1000" step="10" oninput="stamount.value=starg.value" />
+				<input id="stamount" type="text" size="1" value=100 disabled/>
+				<br>
+				<br>
+				<button id="update">Confirm</button>
+			</form>
+		</center>		
+	</body>
+</html>
