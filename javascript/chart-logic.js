@@ -7,7 +7,7 @@ output = 0 // Output to compute
 
 var pid = new PID(2, 10, 0.01)
 pid.setSampleTime(100)
-pid.setOutputLimits(0, 60)
+pid.setOutputLimits(0, 100)
 pid.setTarget(20)
 
 var chartColors = {
@@ -90,16 +90,15 @@ window.onload = function() {
     form.addEventListener('submit', handleForm);
 
     document.getElementById('update').addEventListener('click', function() {
-        window.myChart.config.data.datasets.forEach(function(dataset) {
-            dataset.data = [];
-        });
-        Qd = document.getElementById('qdarg').value // Inflow
-        Qo = document.getElementById('qoarg').value // Outflow
+        window.myChart.config.data.datasets[0].data = [];
+        Qd = parseInt(document.getElementById('qdarg').value) // Inflow
+        Qo = parseInt(document.getElementById('qoarg').value) // Outflow
+        h = parseInt(document.getElementById('starg').value) //level
         output = 0 // Output to compute
-        pid = new PID(document.getElementById('parg').value, document.getElementById('iarg').value, document.getElementById('darg').value)
-        pid.setSampleTime(document.getElementById('starg').value)
-        pid.setOutputLimits(0, 60)
-        pid.setTarget(document.getElementById('harg').value)
+        pid = new PID(parseFloat(document.getElementById('parg').value), parseFloat(document.getElementById('iarg').value), parseFloat(document.getElementById('darg').value))
+        pid.setSampleTime(parseInt(document.getElementById('sptarg').value))
+        pid.setOutputLimits(0, 100)
+        pid.setTarget(parseInt(document.getElementById('harg').value))
         window.myChart.update();
     });
 };
